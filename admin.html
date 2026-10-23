@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>24adz Admin Login</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#101820;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:100%;max-width:400px;background:#1d2730;padding:28px;border-radius:16px;box-shadow:0 10px 35px #0006}
+h1{color:#ff8c00;text-align:center;margin-top:0}
+p{text-align:center;color:#cbd5e1}
+label{display:block;margin-top:18px}
+input{width:100%;padding:13px;margin-top:8px;border:1px solid #52606d;border-radius:8px;background:#101820;color:white;font-size:16px}
+button{width:100%;padding:14px;margin-top:22px;background:#ff8c00;color:#111;border:0;border-radius:8px;font-size:16px;font-weight:bold}
+#message{margin-top:16px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>24Adz Admin</h1>
+<p>Administrator Login</p>
+<form id="loginForm">
+<label for="password">Admin Password</label>
+<input id="password" type="password" autocomplete="current-password" required>
+<button type="submit" id="loginButton">Login</button>
+</form>
+<p id="message" role="status"></p>
+</div>
+<script>
+document.getElementById("loginForm").addEventListener("submit",async function(e){
+e.preventDefault();
+const message=document.getElementById("message");
+const button=document.getElementById("loginButton");
+button.disabled=true;
+message.textContent="Checking login...";
+try{
+const response=await fetch("/api/admin/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({password:document.getElementById("password").value}),
+credentials:"same-origin"
+});
+const data=await response.json();
+if(response.ok&&data.success){
+message.textContent="Login successful. API connection is working.";
+}else{
+message.textContent=data.message||"Login failed. Check your password and API settings.";
+}
+}catch(error){
+message.textContent="Connection error. Please check the API deployment.";
+}finally{
+button.disabled=false;
+}
+});
+</script>
+</body>
+</html>
